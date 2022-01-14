@@ -43,6 +43,8 @@ Route::group(
     ],  function(){
         Route::get('/', 'ProductsController@index')->name('index');
         Route::post('/store','ProductsController@store')->name('store');
+        Route::post('/update','ProductsController@updaate')->name('update');
+        Route::get('/{id?}','ProductsController@show')->name('show');
     }
 );
 
@@ -54,6 +56,7 @@ Route::group(
     ],  function(){
         Route::get('/', 'ServicesController@index')->name('index');
         Route::get('/{id?}', 'ServicesController@show')->name('show');
+        Route::post('/update', 'ServiceController@update')->name('update');
         Route::post('/store','ServicesController@store')->name('store');
     }
 );
