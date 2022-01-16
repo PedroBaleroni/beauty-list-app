@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ServicesController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,47 +21,44 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::group(
+    ['as'=>'auth.',
+    'prefix'=>'entrar'
+], function(){
+    Route::get('/',[AuthController::class,'index'])->name('form-login');
+    Route::get('/dash',[AuthController::class,'dashboard'])->name ('dash');
+    Route::post('/login/storage',[AuthController::class,'insert'])->name('login');
+    Route::post('/register',[AuthController::class,'register'])->name('register');
+
+    }
+);
+Route::get('/',[AuthController::class,'manager'])->name('auth.index');
+
+Route::group(
     [
         'as' => 'schedule.',
-        'prefix' => 'agenda',
-        'middleware' => 'auth'
+        'prefix' => 'agenda'
     ],  function(){
-        Route::get('/meus-horarios','ScheduleController@index')->name('index');
-        Route::get('/clientes','ScheduleController@manager')->name('admin');
-        Route::post('/set','ScheduleController@setSchedule')->name('set');
-        Route::post('/store','ScheduleController@store')->name('store');
-        Route::get('/{id?}','ScheduleController@show')->name('show');
+        Route::get('/meus-horarios', [ScheduleController::class,'index'])->name('index');
+        Route::get('/clientes',[ScheduleController::class,'manager'])->name('admin');
+        Route::get('/set',[ScheduleController::class,'setSchedule'])->name('set');
+        Route::post('/store',[ScheduleController::class,'store'])->name('store');
+        Route::get('/{id?}',[ScheduleController::class,'show'])->name('show');
+        
     }
 );
 
 Route::group(
     [
-        'as' => 'product',
-        'prefix'=>'estoque',
-        'middleware'=>'auth'
+        'as'=>'service.',
+        'prefix' => 'servico'
     ],  function(){
-        Route::get('/', 'ProductsController@index')->name('index');
-        Route::post('/store','ProductsController@store')->name('store');
-        Route::post('/update','ProductsController@updaate')->name('update');
-        Route::get('/{id?}','ProductsController@show')->name('show');
-    }
-);
-
-Route::group(
-    [
-        'as'=>'service',
-        'prefix' => 'servico',
-        'middleware' => 'auth' 
-    ],  function(){
-        Route::get('/', 'ServicesController@index')->name('index');
-        Route::get('/{id?}', 'ServicesController@show')->name('show');
-        Route::post('/update', 'ServiceController@update')->name('update');
-        Route::post('/store','ServicesController@store')->name('store');
+        Route::get('/', [ServicesController::class,'show'])->name('show');
+        Route::get('/set',[ServicesController::class,'setService'])->name('set');
+        Route::post('/store',[ServicesController::class,'store'])->name('store');
     }
 );

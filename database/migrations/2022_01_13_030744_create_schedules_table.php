@@ -17,7 +17,8 @@ class CreateSchedulesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('service_id');
             $table->foreign('service_id')->references('id')->on('services');
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->integer('status')->default(0);
             $table->foreign('client_id')->references('id')->on('users');
             $table->timestamp('service_schedule')->default(now());
             $table->timestamps();
